@@ -30,6 +30,7 @@ configure_credentials $payload
 
 uri=$(jq -r '.source.uri // ""' < $payload)
 branch=$(jq -r '.source.branch // ""' < $payload)
+tagFile=$(jq -r '.params.tag // ""' < $payload)
 git_config_payload=$(jq -r '.source.git_config // []' < $payload)
 ref=$(jq -r '.version.ref // "HEAD"' < $payload)
 depth=$(jq -r '(.params.depth // 0)' < $payload)
@@ -49,6 +50,10 @@ if [ -z "$uri" ]; then
 fi
 
 branchflag=""
+if [ -n "$tagFile" ]; then
+  branchflag="--branch $(cat $tagFile)"
+fi
+
 if [ -n "$branch" ]; then
   branchflag="--branch $branch"
 fi
